@@ -5,7 +5,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token, get_jw
 import bcrypt
 from main_project import api, Resource
 from main_project.register.controller import add_user, find_user, update_Verify, update_password, remove_user, \
-    show_user_details
+    show_user_details,check_email_password
 from main_project.register.utils import send_emails
 
 User_Registration_Blueprint = Blueprint("Register_User", __name__)
@@ -136,15 +136,16 @@ class RemoveUser(Resource):
     @jwt_required()
     def post(self):
         email = get_jwt_identity()
-        password = request.json.get("password")
-        encoded_password = password.encode()
-        hashed_password = bcrypt.hashpw(encoded_password, bcrypt.gensalt(5))
-        info_db = find_user(email)
-        role = info_db["role"]
-        print(info_db["password"])
-        print(hashed_password)
+        password = request.json.get("password").encode()
+
+        info_db = check_email_password(email,password)
+        user_details = find_user(email)
+        role = user_details["role"]
+        # password_db = info_db["password"]
+        # print(password_db)
+        # print(hashed_password)
         if role == "Admin":
-            if hashed_password == info_db["password"]:
+            if info_db:
                 remove_user(email)
                 return make_response(jsonify({"message": "user has been deleted successfully and you cannot login "
                                                          "from this account now"}))

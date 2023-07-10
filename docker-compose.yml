@@ -1,9 +1,12 @@
-version: "3"
+version: "3" #This is the version of mongodb
 services:
   mongodb:
-     image: mongo
+     image: mongo #This is the official image which we are using right now
      ports:
-      - "27017:27017"
+      - "27017:27017" #This is the port mapping where the port 27017 of the host is connected to the port 27017 of the container
+     volumes:
+       - ./mongodb:/data/db
+#The left side of the colon is the host system's directory ,i.e. mongodb and the /data/lib is the directory  on the container
   flask:
     build:
       context: .

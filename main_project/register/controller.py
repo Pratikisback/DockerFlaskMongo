@@ -1,3 +1,5 @@
+import bcrypt
+
 from main_project import client, collection, db
 
 
@@ -44,3 +46,21 @@ def show_user_details(email):
     except Exception as e:
         return str(e)
 
+
+def check_email_password(email, password):
+    result = client.UserDB.UserCollection.find_one({"email": email})
+    try:
+        if result['email'] == email:
+            if bcrypt.checkpw(result['password'], password):
+                return True
+            else:
+                return False
+        else:
+            return False
+    except Exception as e:
+        return str(e)
+
+
+email = "pamit1687@gmail.com"
+password = "1234"
+print(check_email_password(email, password))
